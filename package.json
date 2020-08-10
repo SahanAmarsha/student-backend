@@ -1,13 +1,13 @@
 {
   "name": "todolistapi",
   "version": "1.0.0",
-  "description": "My Todolist",
+  "description": "Students Marks",
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Hiran Walawage",
+  "author": "Sahan Amarsha",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

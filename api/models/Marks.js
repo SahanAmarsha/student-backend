@@ -2,14 +2,13 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var MarksSchema = new Schema({
     studentId: {
-        type: mongoose.Types.ObjectId,
-        required: true,
-        ref: 'Student'
+        type: String,
+        required:true
     },
     subjectId: {
-        type:mongoose.Types.ObjectId,
-        required:true,
-        ref: 'Subject'
+        type: String,
+        required:true
+
     },
     mark: {
         type: Number,

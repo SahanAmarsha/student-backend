@@ -1,38 +1,54 @@
-var express = require('express');
-const cors = require('cors');
+const express = require('express');
+const mongoose = require('mongoose');
 
-var app = express();
+const bodyParser = require('body-parser');
+const studentRoutes = require("./api/routes/StudentRoutes");
 
-app.use(cors());
-
-var port = process.env.PORT || 3000;
-
-var mongoose = require('mongoose');
-
-var Task = require('./api/models/TodoListModel');
-
-var bodyParser = require('body-parser');
-
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/Tododb', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-
-app.use(bodyParser.urlencoded ({
-        extended: true
-    })
-);
+const app = express();
 
 app.use(bodyParser.json());
 
-var routes = require('./api/routes/TodoListRoutes');
-routes(app);
+app.use((req, res, next)=> {
+    res.setHeader('Access-Control-Allow-Origin', '*', );
+    res.setHeader('Access-Control-Allow-Headers',
+        'Origin, X-Requested-With,' +
+        ' Content-Type, Accept,' +
+        ' Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+    next();
+});
 
-app.use(function(req, res) {
+app.use('/student', studentRoutes);
+
+app.use((req, res, next) => {
     res.status(404).send({url: req.originalUrl + ' not found!'});
 });
 
-app.listen(port);
+app.use((error, req, res, next) => {
+    if(res.headersSent)
+    {
+        return next(error);
+    }
+    res.status(error.code || 500);
+    res.json({message: error.message || 'An unknown error occurred'});
+});
 
-console.log('TodList Restful API server started on: '+port);
+
+const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.fc9by.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
+
+//const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0-usg5d.mongodb.net`+
+//     `/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+
+mongoose
+    .connect( url, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true })
+    .then(() =>{
+        app.listen( process.env.PORT ||3000);
+    })
+    .catch(err => console.log( err ));
+
+mongoose.connection.on('connected',()=>{
+    console.log("mongoose is connected");
+});
+
+
+
